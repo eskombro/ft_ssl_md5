@@ -56,7 +56,6 @@ void print_debbug(char *buff, uint64_t expect_ct)
 {
 	print_buff_bits(buff, expect_ct);
 	ft_printf("\nexpect_ct: %d\nSize malloc: %d\nConverted str: %s\n", expect_ct, expect_ct + 64, buff);
-	// ft_printf("last 64 bits (size of str in bits): %ld\n", (uint64_t)buff[expect_ct]);
 	ft_printf("last 64 bits: ");
 	int i;
 	i = -1;
@@ -84,7 +83,6 @@ char	*complete_str(char *str, int *chunk_tot)
 	ft_strcpy(buff, str);
 	buff[ft_strlen(str)] = (char)(1 << 7);
 	ft_memcpy(buff + (expect_ct / 8), &bit_ct, 8);
-	// buff[expect_ct] = bit_ct;
 	*chunk_tot = (expect_ct + 64) / 512;
 	print_debbug(buff, expect_ct);
 	return (buff);
@@ -118,18 +116,14 @@ uint32_t		md5_aux(uint32_t x, uint32_t y, uint32_t z, char funct)
 
 void	process_chunk(char *chunk)
 {
-	ft_printf("Treat chunk");
-	int i;
-	i = -1;
-	while (++i < 64)
-	{
-		if (i % 8 == 0)
-			ft_putchar('\n');
-		print_bits(*(chunk + i));
-		ft_putchar(' ');
+	uint32_t	*words;
+	int			i;
 
-	}
-	ft_putchar('\n');
+	i = -1;
+	if (!(words = (uint32_t *)ft_memalloc(sizeof(uint32_t) * 16)))
+		return ;
+	while (++i < 16)
+		words[i] = *(chunk + (i * 4));
 }
 
 int		launch_md5(char *str)
