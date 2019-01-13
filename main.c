@@ -36,21 +36,23 @@ void	print_bits(unsigned char c)
 	}
 }
 
-void print_buff_bits(char *buff, uint32_t expect_ct)
+void print_buff_bits(char *buff, uint64_t expect_ct)
 {
-	uint32_t i;
+	uint64_t i;
 
 	i = 0;
-	ft_printf("\nBuffer:\n");
-	while (i * 8 <= expect_ct + 64)
+	ft_printf("\nBuffer at %p:\n", buff);
+	while (i * 8 < expect_ct + 64)
 	{
 		print_bits(buff[i]);
 		ft_putchar(' ');
 		i++;
+		if (i % 8 == 0)
+		 	ft_printf("\n");
 	}
 }
 
-void print_debbug(char *buff, uint32_t expect_ct)
+void print_debbug(char *buff, uint64_t expect_ct)
 {
 	print_buff_bits(buff, expect_ct);
 	ft_printf("\nexpect_ct: %d\nSize malloc: %d\nConverted str: %s\n", expect_ct, expect_ct + 64, buff);
@@ -58,21 +60,21 @@ void print_debbug(char *buff, uint32_t expect_ct)
 	ft_printf("last 64 bits: ");
 	int i;
 	i = -1;
-	while (++i < 4)
+	while (++i < 8)
 	{
-		print_bits(buff[expect_ct + i]);
+		print_bits(buff[(expect_ct / 8) + i]);
 		ft_putchar(' ');
 	}
 	ft_putchar('\n');
 }
 
-char	*complete_str(char *str, int *chunk_ct)
+char	*complete_str(char *str, int *chunk_tot)
 {
-	uint32_t	bit_ct;
-	uint32_t	expect_ct;
+	uint64_t	bit_ct;
+	uint64_t	expect_ct;
 	char 		*buff;
 
-	bit_ct = (uint32_t)(ft_strlen(str) * 8);
+	bit_ct = (uint64_t)(ft_strlen(str) * 8);
 	expect_ct = bit_ct;
 	if (bit_ct < 448)
 		expect_ct = 448;
@@ -81,8 +83,9 @@ char	*complete_str(char *str, int *chunk_ct)
 	buff = ft_strnew(expect_ct + 64);
 	ft_strcpy(buff, str);
 	buff[ft_strlen(str)] = (char)(1 << 7);
-	ft_memcpy(buff + expect_ct, &bit_ct, 8);
-	*chunk_ct = (expect_ct + 64) / 512;
+	ft_memcpy(buff + (expect_ct / 8), &bit_ct, 8);
+	// buff[expect_ct] = bit_ct;
+	*chunk_tot = (expect_ct + 64) / 512;
 	print_debbug(buff, expect_ct);
 	return (buff);
 }
@@ -113,22 +116,39 @@ uint32_t		md5_aux(uint32_t x, uint32_t y, uint32_t z, char funct)
 	return (0);
 }
 
+void	process_chunk(char *chunk)
+{
+	ft_printf("Treat chunk");
+	int i;
+	i = -1;
+	while (++i < 64)
+	{
+		if (i % 8 == 0)
+			ft_putchar('\n');
+		print_bits(*(chunk + i));
+		ft_putchar(' ');
+
+	}
+	ft_putchar('\n');
+}
+
 int		launch_md5(char *str)
 {
 	char		*str_512;
 	uint32_t	*md_buff;
+	int			chunk_tot;
 	int			chunk_ct;
 
 	md_buff = NULL;
-	chunk_ct = 0;
-	str_512 = complete_str(str, &chunk_ct);
+	chunk_ct = -1;
+	str_512 = complete_str(str, &chunk_tot);
 	if ((md_buff = initialize_md_buff(4)))
 	{
 		// Buffers are initialized and ready to operate
-		while(chunk_ct--)
+		while(++chunk_ct < chunk_tot)
 		{
 			// Treat every 512 bites chunk
-			ft_printf("TEEEEEE\n");
+			process_chunk(str_512 + (chunk_ct * 512));
 		}
 		free(str_512);
 		return (1);
