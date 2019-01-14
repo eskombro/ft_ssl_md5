@@ -1,4 +1,16 @@
-# include "libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
+/*   Updated: 2019/01/14 23:34:28 by sjimenez         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "ft_ssl_md5.h"
 
 const uint32_t g_k[] = {
 	0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,	0xf57c0faf, 0x4787c62a,
@@ -13,54 +25,10 @@ const uint32_t g_k[] = {
 	0xffeff47d, 0x85845dd1,	0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
 	0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};
 
-
 const uint32_t g_r[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17,
 	22, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 4, 11, 16, 23,
 	4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6, 10, 15, 21, 6, 10, 15, 21,
 	6, 10, 15, 21, 6, 10, 15, 21};
-
-void	print_bits(unsigned char c)
-{
-	unsigned char	i;
-
-	i = 0x80;
-	while (i)
-	{
-		ft_putchar(i & c ? '1' : '0');
-		i >>= 1;
-	}
-}
-
-void print_buff_bits(char *buff, uint64_t expect_ct)
-{
-	uint64_t i;
-
-	i = 0;
-	ft_printf("\nBuffer at %p:\n", buff);
-	while (i * 8 < expect_ct + 64)
-	{
-		print_bits(buff[i]);
-		ft_putchar(' ');
-		i++;
-		if (i % 8 == 0)
-		 	ft_printf("\n");
-	}
-}
-
-void print_debbug(char *buff, uint64_t expect_ct)
-{
-	print_buff_bits(buff, expect_ct);
-	ft_printf("\nexpect_ct: %d\nSize malloc: %d\nConverted str: %s\n", expect_ct, expect_ct + 64, buff);
-	ft_printf("last 64 bits: ");
-	int i;
-	i = -1;
-	while (++i < 8)
-	{
-		print_bits(buff[(expect_ct / 8) + i]);
-		ft_putchar(' ');
-	}
-	ft_putchar('\n');
-}
 
 char	*complete_str(char *str, int *chunk_tot)
 {
@@ -114,15 +82,25 @@ uint32_t	circular_bit_rotation(uint32_t x, uint32_t c)
 	return (((x) << (c)) | ((x) >> (32 - (c))));
 }
 
-unsigned char	*process_chunk(char *chunk, uint32_t *md_buff)
+uint32_t 		*process_chunk(char *chunk, uint32_t *md_buff)
 {
-	uint32_t	*words;
-	int			i;
-	uint32_t	*abcd;
-	uint32_t 	f;
-	uint32_t	g;
-	uint32_t	tmp;
-	unsigned char *ptr;
+	uint32_t		*words;
+	int				i;
+	uint32_t		*abcd;
+	uint32_t		f;
+	uint32_t		g;
+	uint32_t		tmp;
+
+	// char xx;
+	// xx = -1;
+	// while (++xx < 64)
+	// {
+	// 	if (xx % 8 == 0)
+	// 		ft_putchar('\n');
+	// 	print_bits(*(chunk + xx));
+	// 	ft_putchar(' ');
+	// }
+	// ft_putchar('\n');
 
 	i = -1;
 	if (!(words = (uint32_t *)ft_memalloc(sizeof(uint32_t) * 16)))
@@ -130,14 +108,13 @@ unsigned char	*process_chunk(char *chunk, uint32_t *md_buff)
 	while (++i < 16)
 		ft_memcpy(&words[i], chunk + (i * 4), 4);
 	abcd = initialize_md_buff(4);
-	// abcd[0] = md_buff[0];
-	// abcd[1] = md_buff[1];
-	// abcd[2] = md_buff[2];
-	// abcd[3] = md_buff[3];
+	abcd[0] = md_buff[0];
+	abcd[1] = md_buff[1];
+	abcd[2] = md_buff[2];
+	abcd[3] = md_buff[3];
 	i = -1;
 	while (++i < 64)
 	{
-
 		if (i < 16)
 		{
 			f = md5_aux(abcd[1], abcd[2], abcd[3], 'F');
@@ -158,7 +135,6 @@ unsigned char	*process_chunk(char *chunk, uint32_t *md_buff)
 			f = md5_aux(abcd[1], abcd[2], abcd[3], 'I');
 			g = (7 * i) % 16;
 		}
-
 		tmp = abcd[3];
 		abcd[3] = abcd[2];
 		abcd[2] = abcd[1];
@@ -169,17 +145,15 @@ unsigned char	*process_chunk(char *chunk, uint32_t *md_buff)
 	md_buff[1] += abcd[1];
 	md_buff[2] += abcd[2];
 	md_buff[3] += abcd[3];
-	// ft_printf("%8.8x %8.8x %8.8x %8.8x", md_buff[0], md_buff[1], md_buff[2], md_buff[3]);
-	return((unsigned char *)md_buff);
-	// ft_printf("\n%x%x%x%x", *ptr, *(ptr + 1), *(ptr + 2), *(ptr + 3));
+	return(md_buff);
 }
 
 int		launch_md5(char *str)
 {
-	char		*str_512;
-	uint32_t	*md_buff;
-	int			chunk_tot;
-	int			chunk_ct;
+	char			*str_512;
+	uint32_t		*md_buff;
+	int				chunk_tot;
+	int				chunk_ct;
 	unsigned char	*md;
 	int				i;
 
@@ -189,16 +163,22 @@ int		launch_md5(char *str)
 	if ((md_buff = initialize_md_buff(4)))
 	{
 		chunk_ct = -1;
-		while(++chunk_ct < chunk_tot)
-			md = process_chunk(str_512 + (chunk_ct * 512), md_buff);
-		if (md)
+		while (++chunk_ct < chunk_tot)
+		{
+			// ft_printf("Chunk offset: %d\n", (chunk_ct * 64));
+			md_buff = process_chunk(str_512 + (chunk_ct * 64), md_buff);
+		}
+		if (md_buff)
+		{
+			md = (unsigned char *)md_buff;
 			while (++i < 16)
 				ft_printf("%x", *(md++));
+		}
 		free(str_512);
 		return (1);
 	}
 	free(str_512);
-	return(0);
+	return (0);
 }
 
 int		main(int argc, char **argv)
@@ -210,22 +190,5 @@ int		main(int argc, char **argv)
 	{
 		response = launch_md5(argv[1]);
 	}
-
-	// uint32_t a = 1;
-	// unsigned int b = 1;
-	// unsigned char *ptr;
-	// ptr = ((unsigned char *)&a);
-	// print_bits(*(ptr));
-	// print_bits(*(ptr + 1));
-	// print_bits(*(ptr + 2));
-	// print_bits(*(ptr + 3));
-	// ft_putchar('\n');
-	// ptr = ((unsigned char *)&b);
-	// print_bits(*(ptr));
-	// print_bits(*(ptr + 1));
-	// print_bits(*(ptr + 2));
-	// print_bits(*(ptr + 3));
-	// ft_putchar('\n');
-
 	return (response);
 }
