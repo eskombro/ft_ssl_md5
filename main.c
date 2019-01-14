@@ -114,7 +114,7 @@ uint32_t	circular_bit_rotation(uint32_t x, uint32_t c)
 	return (((x) << (c)) | ((x) >> (32 - (c))));
 }
 
-void	process_chunk(char *chunk, uint32_t *md_buff)
+unsigned char	*process_chunk(char *chunk, uint32_t *md_buff)
 {
 	uint32_t	*words;
 	int			i;
@@ -122,10 +122,11 @@ void	process_chunk(char *chunk, uint32_t *md_buff)
 	uint32_t 	f;
 	uint32_t	g;
 	uint32_t	tmp;
+	unsigned char *ptr;
 
 	i = -1;
 	if (!(words = (uint32_t *)ft_memalloc(sizeof(uint32_t) * 16)))
-		return ;
+		return (NULL);
 	while (++i < 16)
 		ft_memcpy(&words[i], chunk + (i * 4), 4);
 	abcd = initialize_md_buff(4);
@@ -168,7 +169,9 @@ void	process_chunk(char *chunk, uint32_t *md_buff)
 	md_buff[1] += abcd[1];
 	md_buff[2] += abcd[2];
 	md_buff[3] += abcd[3];
-	ft_printf("%x %x %x %x", md_buff[0], md_buff[1], md_buff[2], md_buff[3]);
+	// ft_printf("%8.8x %8.8x %8.8x %8.8x", md_buff[0], md_buff[1], md_buff[2], md_buff[3]);
+	return((unsigned char *)md_buff);
+	// ft_printf("\n%x%x%x%x", *ptr, *(ptr + 1), *(ptr + 2), *(ptr + 3));
 }
 
 int		launch_md5(char *str)
@@ -177,14 +180,20 @@ int		launch_md5(char *str)
 	uint32_t	*md_buff;
 	int			chunk_tot;
 	int			chunk_ct;
+	unsigned char	*md;
+	int				i;
 
 	md_buff = NULL;
+	i = -1;
 	str_512 = complete_str(str, &chunk_tot);
 	if ((md_buff = initialize_md_buff(4)))
 	{
 		chunk_ct = -1;
 		while(++chunk_ct < chunk_tot)
-			process_chunk(str_512 + (chunk_ct * 512), md_buff);
+			md = process_chunk(str_512 + (chunk_ct * 512), md_buff);
+		if (md)
+			while (++i < 16)
+				ft_printf("%x", *(md++));
 		free(str_512);
 		return (1);
 	}
@@ -201,5 +210,22 @@ int		main(int argc, char **argv)
 	{
 		response = launch_md5(argv[1]);
 	}
+
+	// uint32_t a = 1;
+	// unsigned int b = 1;
+	// unsigned char *ptr;
+	// ptr = ((unsigned char *)&a);
+	// print_bits(*(ptr));
+	// print_bits(*(ptr + 1));
+	// print_bits(*(ptr + 2));
+	// print_bits(*(ptr + 3));
+	// ft_putchar('\n');
+	// ptr = ((unsigned char *)&b);
+	// print_bits(*(ptr));
+	// print_bits(*(ptr + 1));
+	// print_bits(*(ptr + 2));
+	// print_bits(*(ptr + 3));
+	// ft_putchar('\n');
+
 	return (response);
 }
