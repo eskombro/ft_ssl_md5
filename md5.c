@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/15 20:43:00 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/23 00:50:35 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/23 01:13:23 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ const uint32_t g_rotation_rounds[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12,
 	14, 20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6,
 	10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21};
 
-uint32_t		md5_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
+static uint32_t	md5_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
 {
 	if (funct == 'F')
 		return ((b & c) | (~b & d));
@@ -51,54 +51,54 @@ uint32_t		md5_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
 	return (0);
 }
 
-void			md5_64_oper(t_ssl *h, int i)
+static void		md5_64_oper(t_ssl *h, int i)
 {
 	if (i < 16)
 	{
-		h->f = md5_aux(h->v[1], h->v[2], h->v[3], 'F');
+		h->f = md5_aux(h->temp_b[1], h->temp_b[2], h->temp_b[3], 'F');
 		h->g = i;
 	}
 	else if (i < 32)
 	{
-		h->f = md5_aux(h->v[1], h->v[2], h->v[3], 'G');
+		h->f = md5_aux(h->temp_b[1], h->temp_b[2], h->temp_b[3], 'G');
 		h->g = (5 * i + 1) % 16;
 	}
 	else if (i < 48)
 	{
-		h->f = md5_aux(h->v[1], h->v[2], h->v[3], 'H');
+		h->f = md5_aux(h->temp_b[1], h->temp_b[2], h->temp_b[3], 'H');
 		h->g = (3 * i + 5) % 16;
 	}
 	else
 	{
-		h->f = md5_aux(h->v[1], h->v[2], h->v[3], 'I');
+		h->f = md5_aux(h->temp_b[1], h->temp_b[2], h->temp_b[3], 'I');
 		h->g = (7 * i) % 16;
 	}
 }
 
-void			md5_buffer_oper(t_ssl *h, int i, uint32_t *words)
+static void		md5_buffer_oper(t_ssl *h, int i, uint32_t *words)
 {
-	uint32_t		tmp;
-	uint32_t		to_rotate;
+	uint32_t	tmp;
+	uint32_t	to_rotate;
 
-	tmp = h->v[3];
-	h->v[3] = h->v[2];
-	h->v[2] = h->v[1];
-	to_rotate = h->v[0] + h->f + g_const_md5[i] + words[h->g];
-	h->v[1] += rot_32_left(to_rotate, g_rotation_rounds[i]);
-	h->v[0] = tmp;
+	tmp = h->temp_b[3];
+	h->temp_b[3] = h->temp_b[2];
+	h->temp_b[2] = h->temp_b[1];
+	to_rotate = h->temp_b[0] + h->f + g_const_md5[i] + words[h->g];
+	h->temp_b[1] += rot_32_left(to_rotate, g_rotation_rounds[i]);
+	h->temp_b[0] = tmp;
 }
 
 uint32_t		*process_chunk_md5(uint32_t *chunk, t_ssl *h)
 {
-	uint32_t		*words;
-	int				i;
+	uint32_t	*words;
+	int			i;
 
 	if (!(words = (uint32_t *)ft_memalloc(sizeof(uint32_t) * 16)))
 		return (NULL);
 	i = -1;
 	while (++i < 16)
 		ft_memcpy(&words[i], chunk + i, 4);
-	ft_memcpy(h->v, h->md_buff, 32);
+	ft_memcpy(h->temp_b, h->md_buff, 32);
 	i = -1;
 	while (++i < 64)
 	{
@@ -107,7 +107,7 @@ uint32_t		*process_chunk_md5(uint32_t *chunk, t_ssl *h)
 	}
 	i = -1;
 	while (++i < 4)
-		h->md_buff[i] += h->v[i];
+		h->md_buff[i] += h->temp_b[i];
 	free(words);
 	return (h->md_buff);
 }

@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/23 00:41:41 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/23 01:10:00 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ uint32_t		*initialize_md_buff(int buff_size, char algo)
 	return (buff);
 }
 
-uint32_t		*pre_str(char *str, int block_size, int end_size, t_ssl *h)
+uint32_t		*preproc_str(char *str, int block_size, int end_size, t_ssl *h)
 {
 	uint64_t	bit_ct;
 	uint64_t	expect_ct;
@@ -72,8 +72,8 @@ int				launch_md5(char *str, t_ssl *h)
 	int				i;
 
 	i = -1;
-	h->final_str = pre_str(str, 512, 64, h);
-	if (!(h->v = initialize_md_buff(4, h->algo)))
+	h->final_str = preproc_str(str, 512, 64, h);
+	if (!(h->temp_b = initialize_md_buff(4, h->algo)))
 		return (1);
 	while (++i < h->chunk_tt)
 		h->md_buff = process_chunk_md5(h->final_str + (i * 16), h);
@@ -82,7 +82,7 @@ int				launch_md5(char *str, t_ssl *h)
 		while (++i < 16)
 			ft_printf("%2.2x", *((unsigned char *)h->md_buff + i));
 	free(h->final_str);
-	free(h->v);
+	free(h->temp_b);
 	return (0);
 }
 
@@ -91,8 +91,8 @@ int				launch_sha256(char *str, t_ssl *h)
 	int				i;
 
 	i = -1;
-	h->final_str = pre_str(str, 512, 64, h);
-	if (!(h->v = initialize_md_buff(8, h->algo)))
+	h->final_str = preproc_str(str, 512, 64, h);
+	if (!(h->temp_b = initialize_md_buff(8, h->algo)))
 		return (1);
 	while (++i < h->chunk_tt)
 		h->md_buff = process_chunk_sha256(h->final_str + (i * 16), h);
@@ -101,7 +101,7 @@ int				launch_sha256(char *str, t_ssl *h)
 		while (++i < 8)
 			ft_printf("%2.2x", *(h->md_buff + i));
 	free(h->final_str);
-	free(h->v);
+	free(h->temp_b);
 	return (0);
 }
 
@@ -110,7 +110,7 @@ int				main(int argc, char **argv)
 	uint32_t	response;
 	t_ssl		h;
 
-	h.algo = 1;
+	h.algo = 0;
 	response = 1;
 	if (argc == 2)
 	{

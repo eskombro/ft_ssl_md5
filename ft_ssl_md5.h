@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/23 00:35:05 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/23 01:15:31 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ typedef struct	s_ssl
 {
 	char		algo;
 	uint32_t	*md_buff;
-	uint32_t	*v;
+	uint32_t	*temp_b;
 	uint32_t	*final_str;
 	uint32_t	*final_str_uint;
 	uint32_t	g;
@@ -33,6 +33,27 @@ typedef struct	s_ssl
 */
 
 uint32_t		*initialize_md_buff(int buff_size, char algo);
+int				launch_md5(char *str, t_ssl *h);
+int				launch_sha256(char *str, t_ssl *h);
+uint32_t		*preproc_str(char *str, int block_size, int end_size, t_ssl *h);
+uint32_t		*initialize_md_buff(int buff_size, char algo);
+
+/*
+** md5.c
+*/
+
+uint32_t		*process_chunk_md5(uint32_t *chunk, t_ssl *h);
+
+/*
+** sha256.c
+*/
+
+uint32_t		*process_chunk_sha256(uint32_t *chunk, t_ssl *h);
+
+/*
+** rot_32_bits.c
+*/
+
 uint32_t		rot_32_left(uint32_t base, uint32_t rounds);
 uint32_t		rot_32_right(uint32_t base, uint32_t rounds);
 
@@ -43,30 +64,5 @@ uint32_t		rot_32_right(uint32_t base, uint32_t rounds);
 void			print_bits(unsigned char c);
 void			print_buff_bits(char *buff, uint64_t expect_ct);
 void			print_debbug(char *buff, uint64_t expect_ct);
-
-/*
-** md5.c
-*/
-
-uint32_t		md5_aux(uint32_t b, uint32_t c, uint32_t d, char funct);
-void			md5_64_oper(t_ssl *h, int i);
-void			md5_buffer_oper(t_ssl *h, int i, uint32_t *words);
-uint32_t		*process_chunk_md5(uint32_t *chunk, t_ssl *h);
-
-/*
-** sha256.c
-*/
-
-uint32_t		sha256_aux(uint32_t b, uint32_t c, uint32_t d, char funct);
-void			sha256_64_oper(t_ssl *h, uint32_t *words);
-void			sha256_buffer_oper(t_ssl *h, int i, uint32_t *words);
-uint32_t		*process_chunk_sha256(uint32_t *chunk, t_ssl *h);
-
-/*
-** rot_32_bits.c
-*/
-
-uint32_t		rot_32_left(uint32_t base, uint32_t rounds);
-uint32_t		rot_32_right(uint32_t base, uint32_t rounds);
 
 #endif

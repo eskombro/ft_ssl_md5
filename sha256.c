@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/15 20:43:00 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/23 00:46:37 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/23 01:13:04 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ uint32_t		sha256_aux_sig(uint32_t b, char funct)
 	return (0);
 }
 
-void			invert_bytes(uint32_t *words, t_ssl *h)
+static void		invert_bytes(uint32_t *words, t_ssl *h)
 {
 	uint32_t	temp_swap;
 	uint32_t	*temp_words;
@@ -80,35 +80,35 @@ void			invert_bytes(uint32_t *words, t_ssl *h)
 	}
 }
 
-void			sha256_64_oper(t_ssl *h, uint32_t *words)
+static void		sha256_64_oper(t_ssl *h, uint32_t *words)
 {
-	uint32_t		temp;
-	uint32_t		temp2;
-	int				i;
+	uint32_t	temp;
+	uint32_t	temp2;
+	int			i;
 
 	i = -1;
 	while (++i < 64)
 	{
-		temp = h->v[7] + sha256_aux_sig(h->v[4], 'B');
-		temp += sha256_aux(h->v[4], h->v[5], h->v[6], 'C');
+		temp = h->temp_b[7] + sha256_aux_sig(h->temp_b[4], 'B');
+		temp += sha256_aux(h->temp_b[4], h->temp_b[5], h->temp_b[6], 'C');
 		temp += g_const_sha256[i] + words[i];
-		temp2 = sha256_aux_sig(h->v[0], 'b');
-		temp2 += sha256_aux(h->v[0], h->v[1], h->v[2], 'M');
-		h->v[7] = h->v[6];
-		h->v[6] = h->v[5];
-		h->v[5] = h->v[4];
-		h->v[4] = h->v[3] + temp;
-		h->v[3] = h->v[2];
-		h->v[2] = h->v[1];
-		h->v[1] = h->v[0];
-		h->v[0] = temp + temp2;
+		temp2 = sha256_aux_sig(h->temp_b[0], 'b');
+		temp2 += sha256_aux(h->temp_b[0], h->temp_b[1], h->temp_b[2], 'M');
+		h->temp_b[7] = h->temp_b[6];
+		h->temp_b[6] = h->temp_b[5];
+		h->temp_b[5] = h->temp_b[4];
+		h->temp_b[4] = h->temp_b[3] + temp;
+		h->temp_b[3] = h->temp_b[2];
+		h->temp_b[2] = h->temp_b[1];
+		h->temp_b[1] = h->temp_b[0];
+		h->temp_b[0] = temp + temp2;
 	}
 }
 
 uint32_t		*process_chunk_sha256(uint32_t *chunk, t_ssl *h)
 {
-	uint32_t		*words;
-	int				i;
+	uint32_t	*words;
+	int			i;
 
 	if (!(words = (uint32_t *)ft_memalloc(sizeof(uint32_t) * 64)))
 		return (NULL);
@@ -120,11 +120,11 @@ uint32_t		*process_chunk_sha256(uint32_t *chunk, t_ssl *h)
 		words[i] = sha256_aux_sig(words[i - 2], 'S') + words[i - 7];
 		words[i] += sha256_aux_sig(words[i - 15], 's') + words[i - 16];
 	}
-	ft_memcpy(h->v, h->md_buff, 32);
+	ft_memcpy(h->temp_b, h->md_buff, 32);
 	sha256_64_oper(h, words);
 	i = -1;
 	while (++i < 8)
-		h->md_buff[i] += h->v[i];
+		h->md_buff[i] += h->temp_b[i];
 	free(words);
 	return (h->md_buff);
 }
