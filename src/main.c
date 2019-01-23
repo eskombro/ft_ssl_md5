@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/23 01:10:00 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/24 00:44:00 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ uint32_t		*initialize_md_buff(int buff_size, char algo)
 
 	if (!(buff = (uint32_t *)ft_memalloc(sizeof(uint32_t) * buff_size + 1)))
 		return (NULL);
-	if (algo == 0)
+	if (algo == MD5)
 	{
 		buff[0] = 0x67452301;
 		buff[1] = 0xefcdab89;
 		buff[2] = 0x98badcfe;
 		buff[3] = 0x10325476;
 	}
-	else if (algo == 1)
+	else if (algo == SHA_256)
 	{
 		buff[0] = 0x6a09e667;
 		buff[1] = 0xbb67ae85;
@@ -81,6 +81,7 @@ int				launch_md5(char *str, t_ssl *h)
 	if (h->md_buff)
 		while (++i < 16)
 			ft_printf("%2.2x", *((unsigned char *)h->md_buff + i));
+	ft_printf("\n");
 	free(h->final_str);
 	free(h->temp_b);
 	return (0);
@@ -109,17 +110,45 @@ int				main(int argc, char **argv)
 {
 	uint32_t	response;
 	t_ssl		h;
+	int			i;
+	char		*b_size;
 
-	h.algo = 0;
 	response = 1;
-	if (argc == 2)
+	i = 0;
+	h.algo = 0;
+	if (argc == 1)
+		ft_printf("Usage: ./ft_ssl command [command options] [command args]\n");
+	else
 	{
-		if (h.algo == 0)
-			if ((h.md_buff = initialize_md_buff(4, h.algo)))
-				response = launch_md5(argv[1], &h);
-		if (h.algo == 1)
-			if ((h.md_buff = initialize_md_buff(8, h.algo)))
-				response = launch_sha256(argv[1], &h);
+		h.options = 0;
+		while (++i < argc)
+		{
+			if (i == 1)
+			{
+				if (!ft_strcmp(argv[1], "md5"))
+					h.algo = MD5;
+				else if (!ft_strcmp(argv[1], "sha256"))
+					h.algo = SHA_256;
+				else
+				{
+					ft_printf("Error: possible commands are \"md5\" and \"sha256\"\n");
+					exit(1);
+				}
+			}
+			else
+			{
+				//Handle options
+			}
+		}
+		b_size = ft_strdup(TEMP_BUFFERS_SIZE);
+		if ((h.md_buff = initialize_md_buff(b_size[h.algo - 1], h.algo)))
+		{
+			if (h.algo == MD5)
+				response = launch_md5(argv[2], &h);
+			else if (h.algo == SHA_256)
+				response = launch_sha256(argv[2], &h);
+		}
+		free(b_size);
 	}
 	return (response);
 }
