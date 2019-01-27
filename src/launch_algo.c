@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 06:18:49 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 13:15:17 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,16 @@ static void		print_result(t_ssl *h, int tmp_buff_size)
 	int			i;
 
 	i = -1;
-	if (!(h->options & OPT_Q))
-		ft_printf("%s(%s)= ", ft_strtoupper(h->algo_name), h->file_path);
+	if ((h->options & OPT_P) && h->f_cur == 0)
+		ft_printf("%s", h->f_txt[h->f_cur]);
+	if (!(h->options & OPT_Q) && !(h->options & OPT_R) && !h->std_in)
+		ft_printf("%s (%s) = ",
+			ft_strtoupper(h->algo_name), h->f_path[h->f_cur]);
 	if (h->md_buff)
 		while (++i < tmp_buff_size)
 			ft_printf("%8.8x", *(h->md_buff + i));
+	if (h->options & OPT_R && !(h->options & OPT_Q) && h->std_in != 1)
+		ft_printf(" %s", h->f_path[h->f_cur]);
 	ft_printf("\n");
 }
 

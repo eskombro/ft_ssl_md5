@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 07:57:16 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 13:14:28 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,12 @@ typedef struct	s_ssl
 	int			chunk_tt;
 	int			chunk_current;
 	int			b_size;
+	int			file_ct;
+	int			f_cur;
 	char		options;
 	char		*algo_name;
-	char		*file_path;
-	char		*file_txt;
+	char		**f_path;
+	char		**f_txt;
 	char		std_in;
 }				t_ssl;
 

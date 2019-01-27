@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 08:30:03 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 13:17:09 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,24 +29,24 @@ int				read_file(t_ssl *h, int fd)
 	char		*line;
 	int			r;
 
-	h->file_txt = NULL;
+	h->f_txt[h->f_cur] = NULL;
 	if (!(line = ft_memalloc(BUFF_SIZE_READ)))
 		return (1);
 	while ((r = read(fd, line, BUFF_SIZE_READ)))
 	{
-		if (h->file_txt == NULL)
-			h->file_txt = ft_strdup(line);
+		if (h->f_txt[h->f_cur] == NULL)
+			h->f_txt[h->f_cur] = ft_strdup(line);
 		else
-			h->file_txt = ft_strjoin_free(h->file_txt, line, 0);
+			h->f_txt[h->f_cur] = ft_strjoin_free(h->f_txt[h->f_cur], line, 0);
 		ft_bzero(line, BUFF_SIZE_READ);
 	}
 	ft_strdel(&line);
-	if (!h->file_txt)
-		h->file_txt = ft_strnew(1);
+	if (!h->f_txt[h->f_cur])
+		h->f_txt[h->f_cur] = ft_strnew(1);
 	return (0);
 }
 
-int				main_logic(t_ssl *h, int ac, char **av)
+int				main_logic(t_ssl *h)
 {
 	int			response;
 	int			fd;
@@ -56,16 +56,24 @@ int				main_logic(t_ssl *h, int ac, char **av)
 	{
 		fd = 0;
 		if (h->std_in == 0)
-			fd = open(av[ac - 1], O_RDWR);
+			fd = open(h->f_path[h->f_cur], O_RDWR);
 		if (fd >= 0)
 		{
 			read_file(h, fd);
-			response = launch_algo(h->file_txt, h);
-			ft_strdel(&h->file_txt);
+			response = launch_algo(h->f_txt[h->f_cur], h);
+			ft_strdel(&h->f_txt[h->f_cur]);
+		}
+		else if (h->options & OPT_S)
+		{
+			response = launch_algo(h->f_txt[h->f_cur], h);
+			ft_strdel(&h->f_txt[h->f_cur]);
+			if (h->options & OPT_S)
+				h->options ^= OPT_S;
 		}
 		else
 		{
-			print_message(2, h->file_path);
+			print_message(2, h->f_path[h->f_cur]);
+			return (0);
 		}
 	}
 	return (response);
@@ -75,6 +83,7 @@ int				main(int ac, char **av)
 {
 	t_ssl		*h;
 	char		*b_size;
+	int			i;
 
 	if (!(h = (t_ssl*)ft_memalloc(sizeof(t_ssl))))
 		return (1);
@@ -87,10 +96,19 @@ int				main(int ac, char **av)
 		b_size = ft_strdup(TEMP_BUFFERS_SIZE);
 		h->b_size = b_size[h->algo - 1] - 48;
 		ft_strdel(&b_size);
-		if (main_logic(h, ac, av))
-			return (1);
+		i = 0;
+		h->f_cur = -1;
+		while (++h->f_cur < h->file_ct)
+		{
+			h->chunk_current = 0;
+			if (main_logic(h))
+				return (1);
+			h->std_in = 0;
+		}
 	}
 	ft_strdel(&h->algo_name);
-	ft_strdel(&h->file_path);
+	i = -1;
+	while (++i < h->file_ct)
+		ft_strdel(&h->f_path[i]);
 	return (0);
 }
