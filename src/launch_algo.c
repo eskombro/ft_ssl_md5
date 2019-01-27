@@ -6,15 +6,15 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 06:06:03 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 06:18:49 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
 
-static void				print_result(t_ssl *h, int tmp_buff_size)
+static void		print_result(t_ssl *h, int tmp_buff_size)
 {
-	int		i;
+	int			i;
 
 	i = -1;
 	if (!(h->options & OPT_Q))
@@ -27,7 +27,7 @@ static void				print_result(t_ssl *h, int tmp_buff_size)
 
 int				launch_algo(char *str, t_ssl *h)
 {
-	int				i;
+	int			i;
 
 	i = -1;
 	h->final_str = preproc_str(str, 512, 64, h);

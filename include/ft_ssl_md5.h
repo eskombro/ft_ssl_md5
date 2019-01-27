@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 05:38:16 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 07:57:16 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,20 @@ typedef struct	s_ssl
 	char		*algo_name;
 	char		*file_path;
 	char		*file_txt;
+	char		std_in;
 }				t_ssl;
 
 /*
 ** main.c
 */
+
+void			print_message(int m, char *arg);
+
+/*
+** handle_args.c
+*/
+
+int				handle_args(t_ssl *h, int ac, char **av);
 
 /*
 ** preproc.c

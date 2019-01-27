@@ -6,11 +6,23 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 06:15:51 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 08:30:03 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
+
+void			print_message(int m, char *arg)
+{
+	if (m == 1)
+		ft_printf("Usage: ./ft_ssl command [command options] [command args]\n");
+	else if (m == 2)
+		ft_printf("Error: '%s'. File doesn't exist.\n", arg);
+	else if (m == 3)
+		ft_printf("Error: possible commands are \"md5\" and \"sha256\"\n");
+	else if (m == 4)
+		ft_printf("Error: %s is not a valid option \n", arg);
+}
 
 int				read_file(t_ssl *h, int fd)
 {
@@ -34,76 +46,51 @@ int				read_file(t_ssl *h, int fd)
 	return (0);
 }
 
-int				handle_args(t_ssl *h, int ac, char **av)
+int				main_logic(t_ssl *h, int ac, char **av)
 {
-	int			i;
+	int			response;
+	int			fd;
 
-	i = 0;
-	while (++i < ac)
+	response = 1;
+	if ((h->md_buff = initialize_md_buff(h->b_size, h->algo)))
 	{
-		if (i == 1)
+		fd = 0;
+		if (h->std_in == 0)
+			fd = open(av[ac - 1], O_RDWR);
+		if (fd >= 0)
 		{
-			if (!(h->algo_name = ft_strdup(av[1])))
-				return (1);
-			if (!(h->file_path = ft_strdup(av[ac - 1])))
-				return (1);
-			if (!ft_strcmp(av[1], "md5"))
-				h->algo = MD5;
-			else if (!ft_strcmp(av[1], "sha256"))
-				h->algo = SHA_256;
-			else
-			{
-				ft_printf("Error: possible commands are \"md5\" and \"sha256\"\n");
-				exit(1);
-			}
+			read_file(h, fd);
+			response = launch_algo(h->file_txt, h);
+			ft_strdel(&h->file_txt);
 		}
 		else
 		{
-			//Handle options
+			print_message(2, h->file_path);
 		}
 	}
-	return (0);
+	return (response);
 }
 
 int				main(int ac, char **av)
 {
-	uint32_t	response;
 	t_ssl		*h;
 	char		*b_size;
-	int			fd;
 
-	response = 1;
 	if (!(h = (t_ssl*)ft_memalloc(sizeof(t_ssl))))
 		return (1);
 	if (ac == 1)
-		ft_printf("Usage: ./ft_ssl command [command options] [command args]\n");
+		print_message(1, NULL);
 	else
 	{
 		if (handle_args(h, ac, av))
 			return (1);
 		b_size = ft_strdup(TEMP_BUFFERS_SIZE);
 		h->b_size = b_size[h->algo - 1] - 48;
-		free(b_size);
-		if ((h->md_buff = initialize_md_buff(h->b_size, h->algo)))
-		{
-			if ((fd = open(av[2], O_RDWR)) >= 0)
-			{
-				read_file(h, fd);
-				response = launch_algo(h->file_txt, h);
-				free(h->file_txt);
-			}
-			else
-			{
-				if (av[2])
-				{
-					ft_printf("Error: '%s'\n", av[2]);
-					ft_printf("File doesn't exist or is a directory\n");
-				}
-				else
-					ft_printf("Usage: ./ft_ssl command [command options] [command args]\n");
-			}
-		}
-
+		ft_strdel(&b_size);
+		if (main_logic(h, ac, av))
+			return (1);
 	}
-	return (response);
+	ft_strdel(&h->algo_name);
+	ft_strdel(&h->file_path);
+	return (0);
 }
