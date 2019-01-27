@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 04:48:33 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 05:38:16 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@ typedef struct	s_ssl
 	uint32_t	f;
 	int			chunk_tt;
 	int			chunk_current;
+	int			b_size;
 	char		options;
+	char		*algo_name;
+	char		*file_path;
+	char		*file_txt;
 }				t_ssl;
 
 /*
