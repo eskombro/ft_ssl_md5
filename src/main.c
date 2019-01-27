@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 03:47:21 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 04:55:45 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int				main(int ac, char **av)
 	int			fd;
 	char		*file_txt;
 	char		*line;
+	int			r;
 
 	response = 1;
 	i = 0;
@@ -57,7 +58,6 @@ int				main(int ac, char **av)
 			if ((fd = open(av[2], O_RDWR)) >= 0)
 			{
 				line = ft_memalloc(BUFF_SIZE_READ);
-				int r;
 				while ((r = read(fd, line, BUFF_SIZE_READ)))
 				{
 					if (file_txt == NULL)
@@ -69,10 +69,7 @@ int				main(int ac, char **av)
 				ft_strdel(&line);
 				if (!file_txt)
 					file_txt = ft_strnew(1);
-				if (h.algo == MD5)
-					response = launch_md5(file_txt, &h);
-				else if (h.algo == SHA_256)
-					response = launch_sha256(file_txt, &h);
+				response = launch_algo(file_txt, &h);
 			}
 			else
 			{

@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 03:24:31 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 04:48:33 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,7 @@ uint32_t		*preproc_str(char *str, int block_size, int end_size, t_ssl *h);
 ** launch_algo.c
 */
 
-int				launch_md5(char *str, t_ssl *h);
-int				launch_sha256(char *str, t_ssl *h);
+int				launch_algo(char *str, t_ssl *h);
 
 /*
 ** md5.c

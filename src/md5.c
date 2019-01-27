@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/15 20:43:00 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/23 01:13:23 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/27 04:19:38 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,23 @@ static uint32_t	md5_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
 	else if (funct == 'I')
 		return (c ^ (b | ~d));
 	return (0);
+}
+
+static void		invert_bytes_md5(uint32_t *words, t_ssl *h)
+{
+	int			i;
+
+	i = -1;
+	h->chunk_current++;
+	if (h->chunk_current == h->chunk_tt)
+	{
+		while (++i < 4)
+		{
+			*words = (*words & 0x000000FF) << 24 | (*words & 0x0000FF00) << 8 |
+				(*words & 0x00FF0000) >> 8 | (*words & 0xFF000000) >> 24;
+			words++;
+		}
+	}
 }
 
 static void		md5_64_oper(t_ssl *h, int i)
@@ -108,6 +125,7 @@ uint32_t		*process_chunk_md5(uint32_t *chunk, t_ssl *h)
 	i = -1;
 	while (++i < 4)
 		h->md_buff[i] += h->temp_b[i];
+	invert_bytes_md5(h->md_buff, h);
 	free(words);
 	return (h->md_buff);
 }
