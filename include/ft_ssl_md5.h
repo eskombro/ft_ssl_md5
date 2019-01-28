@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 13:14:28 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 09:18:28 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 # define BUFF_SIZE_READ 30
 # define TEMP_BUFFERS_SIZE "48"
 
+# include "libft.h"
+
 enum {OPT_S = 8, OPT_R = 4, OPT_Q = 2, OPT_P = 1};
 enum {MD5 = 1, SHA_256 = 2};
-
-# include "libft.h"
 
 typedef struct	s_ssl
 {
@@ -87,9 +87,10 @@ uint32_t		rot_32_left(uint32_t base, uint32_t rounds);
 uint32_t		rot_32_right(uint32_t base, uint32_t rounds);
 
 /*
-** print_debbug.c
+** print.c
 */
 
+void			print_message(int m, char *arg);
 void			print_bits(unsigned char c);
 void			print_buff_bits(char *buff, uint64_t expect_ct);
 void			print_debbug(char *buff, uint64_t expect_ct);

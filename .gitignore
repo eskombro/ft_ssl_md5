@@ -50,7 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Project specifics
 *.test
+test.py
 
 # Executable
 ft_ssl

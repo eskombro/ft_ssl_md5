@@ -6,11 +6,23 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:10 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/14 23:33:43 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 09:17:53 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
+
+void	print_message(int m, char *arg)
+{
+	if (m == 1)
+		ft_printf("Usage: ./ft_ssl command [command options] [command args]\n");
+	else if (m == 2)
+		ft_printf("Error: '%s'. File doesn't exist.\n", arg);
+	else if (m == 3)
+		ft_printf("Error: possible commands are \"md5\" and \"sha256\"\n");
+	else if (m == 4)
+		ft_printf("Error: %s is not a valid option \n", arg);
+}
 
 void	print_bits(unsigned char c)
 {

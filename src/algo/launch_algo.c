@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 13:15:17 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 11:08:42 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ int				launch_algo(char *str, t_ssl *h)
 	int			i;
 
 	i = -1;
-	h->final_str = preproc_str(str, 512, 64, h);
+	if (!(h->final_str = preproc_str(str, 512, 64, h)))
+		return (1);
 	if (!(h->temp_b = initialize_md_buff(h->b_size, h->algo)))
 		return (1);
 	while (++i < h->chunk_tt)

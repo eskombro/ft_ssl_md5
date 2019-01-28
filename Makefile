@@ -6,7 +6,7 @@
 #    By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/23 20:46:59 by sjimenez          #+#    #+#              #
-#    Updated: 2019/01/27 07:48:29 by sjimenez         ###   ########.fr        #
+#    Updated: 2019/01/28 11:50:58 by sjimenez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,13 +22,16 @@ LIBFT_INCLUDES = libft/includes
 LIB = libft -lft
 
 SRCS =	main.c					\
+								\
+		algo/md5.c				\
+		algo/sha256.c			\
+		algo/launch_algo.c		\
+								\
 		handle_args.c			\
-		launch_algo.c			\
-		md5.c					\
 		preproc.c				\
-		print_debbug.c			\
+		print.c					\
 		rot_32_bits.c			\
-		sha256.c				\
+
 
 SRCS_O = $(addprefix $(SRCS_DIR),  $(SRCS:.c=.o))
 
