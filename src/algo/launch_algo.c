@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 11:08:42 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 18:21:34 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ int				launch_algo(char *str, t_ssl *h)
 	{
 		if (h->algo == MD5)
 			h->md_buff = process_chunk_md5(h->final_str + (i * 16), h);
-		else if (h->algo == SHA_256)
-			h->md_buff = process_chunk_sha256(h->final_str + (i * 16), h);
+		else if (h->algo == SHA_256 || h->algo == SHA_224)
+			h->md_buff = process_chunk_sha2(h->final_str + (i * 16), h);
 	}
 	print_result(h, h->b_size);
 	free(h->final_str);

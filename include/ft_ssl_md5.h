@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 09:18:28 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 18:21:43 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 # define FT_SSL_MD5_H
 
 # define BUFF_SIZE_READ 30
-# define TEMP_BUFFERS_SIZE "48"
+# define TEMP_BUFFERS_SIZE "487"
 
 # include "libft.h"
 
 enum {OPT_S = 8, OPT_R = 4, OPT_Q = 2, OPT_P = 1};
-enum {MD5 = 1, SHA_256 = 2};
+enum {MD5 = 1, SHA_256 = 2, SHA_224 = 3};
 
 typedef struct	s_ssl
 {
@@ -77,7 +77,7 @@ uint32_t		*process_chunk_md5(uint32_t *chunk, t_ssl *h);
 ** sha256.c
 */
 
-uint32_t		*process_chunk_sha256(uint32_t *chunk, t_ssl *h);
+uint32_t		*process_chunk_sha2(uint32_t *chunk, t_ssl *h);
 
 /*
 ** rot_32_bits.c

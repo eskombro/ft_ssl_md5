@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:16:12 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 12:39:18 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 18:18:42 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,17 @@ uint32_t		*initialize_md_buff(int buff_size, char algo)
 		b[5] = 0x9b05688c;
 		b[6] = 0x1f83d9ab;
 		b[7] = 0x5be0cd19;
+	}
+	else if (algo == SHA_224)
+	{
+		b[0] = 0xc1059ed8;
+		b[1] = 0x367cd507;
+		b[2] = 0x3070dd17;
+		b[3] = 0xf70e5939;
+		b[4] = 0xffc00b31;
+		b[5] = 0x68581511;
+		b[6] = 0x64f98fa7;
+		b[7] = 0xbefa4fa4;
 	}
 	return (b);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sha256.c                                           :+:      :+:    :+:   */
+/*   sha2.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/15 20:43:00 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/27 04:17:39 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 18:24:03 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 ** the cube roots of the first sixty-four prime numbers
 */
 
-const uint32_t g_const_sha256[] = {
+const uint32_t		g_const_sha2[] = {
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
 	0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
 	0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -31,7 +31,7 @@ const uint32_t g_const_sha256[] = {
 	0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
-uint32_t		sha256_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
+static uint32_t		sha2_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
 {
 	if (funct == 'C')
 		return ((b & c) ^ (~b & d));
@@ -40,7 +40,7 @@ uint32_t		sha256_aux(uint32_t b, uint32_t c, uint32_t d, char funct)
 	return (0);
 }
 
-uint32_t		sha256_aux_sig(uint32_t b, char funct)
+static uint32_t		sha2_aux_sig(uint32_t b, char funct)
 {
 	if (funct == 'b')
 		return (rot_32_right(b, 2) ^ rot_32_right(b, 13) ^ rot_32_right(b, 22));
@@ -53,12 +53,12 @@ uint32_t		sha256_aux_sig(uint32_t b, char funct)
 	return (0);
 }
 
-static void		invert_bytes(uint32_t *words, t_ssl *h)
+static void			invert_bytes_sha_2(uint32_t *words, t_ssl *h)
 {
-	uint32_t	temp_swap;
-	uint32_t	*temp_words;
-	int			i;
-	int			rounds;
+	uint32_t		temp_swap;
+	uint32_t		*temp_words;
+	int				i;
+	int				rounds;
 
 	i = -1;
 	temp_words = words;
@@ -80,20 +80,20 @@ static void		invert_bytes(uint32_t *words, t_ssl *h)
 	}
 }
 
-static void		sha256_64_oper(t_ssl *h, uint32_t *words)
+static void			sha2_64_oper(t_ssl *h, uint32_t *words)
 {
-	uint32_t	temp;
-	uint32_t	temp2;
-	int			i;
+	uint32_t		temp;
+	uint32_t		temp2;
+	int				i;
 
 	i = -1;
 	while (++i < 64)
 	{
-		temp = h->temp_b[7] + sha256_aux_sig(h->temp_b[4], 'B');
-		temp += sha256_aux(h->temp_b[4], h->temp_b[5], h->temp_b[6], 'C');
-		temp += g_const_sha256[i] + words[i];
-		temp2 = sha256_aux_sig(h->temp_b[0], 'b');
-		temp2 += sha256_aux(h->temp_b[0], h->temp_b[1], h->temp_b[2], 'M');
+		temp = h->temp_b[7] + sha2_aux_sig(h->temp_b[4], 'B');
+		temp += sha2_aux(h->temp_b[4], h->temp_b[5], h->temp_b[6], 'C');
+		temp += g_const_sha2[i] + words[i];
+		temp2 = sha2_aux_sig(h->temp_b[0], 'b');
+		temp2 += sha2_aux(h->temp_b[0], h->temp_b[1], h->temp_b[2], 'M');
 		h->temp_b[7] = h->temp_b[6];
 		h->temp_b[6] = h->temp_b[5];
 		h->temp_b[5] = h->temp_b[4];
@@ -105,23 +105,23 @@ static void		sha256_64_oper(t_ssl *h, uint32_t *words)
 	}
 }
 
-uint32_t		*process_chunk_sha256(uint32_t *chunk, t_ssl *h)
+uint32_t			*process_chunk_sha2(uint32_t *chunk, t_ssl *h)
 {
-	uint32_t	*words;
-	int			i;
+	uint32_t		*words;
+	int				i;
 
 	if (!(words = (uint32_t *)ft_memalloc(sizeof(uint32_t) * 64)))
 		return (NULL);
 	ft_memcpy(words, chunk, 64);
-	invert_bytes(words, h);
+	invert_bytes_sha_2(words, h);
 	i = 15;
 	while (++i < 64)
 	{
-		words[i] = sha256_aux_sig(words[i - 2], 'S') + words[i - 7];
-		words[i] += sha256_aux_sig(words[i - 15], 's') + words[i - 16];
+		words[i] = sha2_aux_sig(words[i - 2], 'S') + words[i - 7];
+		words[i] += sha2_aux_sig(words[i - 15], 's') + words[i - 16];
 	}
 	ft_memcpy(h->temp_b, h->md_buff, 32);
-	sha256_64_oper(h, words);
+	sha2_64_oper(h, words);
 	i = -1;
 	while (++i < 8)
 		h->md_buff[i] += h->temp_b[i];

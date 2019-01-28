@@ -6,7 +6,7 @@
 #    By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/23 20:46:59 by sjimenez          #+#    #+#              #
-#    Updated: 2019/01/28 11:50:58 by sjimenez         ###   ########.fr        #
+#    Updated: 2019/01/28 18:22:54 by sjimenez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ LIB = libft -lft
 SRCS =	main.c					\
 								\
 		algo/md5.c				\
-		algo/sha256.c			\
+		algo/sha2.c		\
 		algo/launch_algo.c		\
 								\
 		handle_args.c			\
