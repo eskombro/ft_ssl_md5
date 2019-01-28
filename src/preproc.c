@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:16:12 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 12:06:33 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/28 12:39:18 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ uint32_t		*initialize_md_buff(int buff_size, char algo)
 {
 	uint32_t		*b;
 
-	if (!(b = (uint32_t *)ft_memalloc(sizeof(uint32_t) * (buff_size + 1) * 16)))
+	if (!(b = (uint32_t *)ft_memalloc(sizeof(uint32_t) * (buff_size + 1) * 64)))
 		return (NULL);
 	if (algo == MD5)
 	{
