@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 18:21:34 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/30 18:38:36 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,18 @@ static void		print_result(t_ssl *h, int tmp_buff_size)
 int				launch_algo(char *str, t_ssl *h)
 {
 	int			i;
+	uint32_t	*(*list_f[3])(uint32_t *chunk, t_ssl *h);
 
 	i = -1;
+	list_f[0] = process_chunk_md5;
+	list_f[1] = process_chunk_sha2;
+	list_f[2] = process_chunk_sha2;
 	if (!(h->final_str = preproc_str(str, 512, 64, h)))
 		return (1);
 	if (!(h->temp_b = initialize_md_buff(h->b_size, h->algo)))
 		return (1);
 	while (++i < h->chunk_tt)
-	{
-		if (h->algo == MD5)
-			h->md_buff = process_chunk_md5(h->final_str + (i * 16), h);
-		else if (h->algo == SHA_256 || h->algo == SHA_224)
-			h->md_buff = process_chunk_sha2(h->final_str + (i * 16), h);
-	}
+		h->md_buff = list_f[h->algo - 1](h->final_str + (i * 16), h);
 	print_result(h, h->b_size);
 	free(h->final_str);
 	free(h->temp_b);
