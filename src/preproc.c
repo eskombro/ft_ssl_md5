@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:16:12 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 18:18:42 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/30 19:49:59 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,41 +20,50 @@
 ** 			square roots of the first eight prime numbers
 */
 
-uint32_t		*initialize_md_buff(int buff_size, char algo)
+uint32_t		*initialize_buff_md5(int buff_size)
 {
 	uint32_t		*b;
 
 	if (!(b = (uint32_t *)ft_memalloc(sizeof(uint32_t) * (buff_size + 1) * 64)))
 		return (NULL);
-	if (algo == MD5)
-	{
-		b[0] = 0x67452301;
-		b[1] = 0xefcdab89;
-		b[2] = 0x98badcfe;
-		b[3] = 0x10325476;
-	}
-	else if (algo == SHA_256)
-	{
-		b[0] = 0x6a09e667;
-		b[1] = 0xbb67ae85;
-		b[2] = 0x3c6ef372;
-		b[3] = 0xa54ff53a;
-		b[4] = 0x510e527f;
-		b[5] = 0x9b05688c;
-		b[6] = 0x1f83d9ab;
-		b[7] = 0x5be0cd19;
-	}
-	else if (algo == SHA_224)
-	{
-		b[0] = 0xc1059ed8;
-		b[1] = 0x367cd507;
-		b[2] = 0x3070dd17;
-		b[3] = 0xf70e5939;
-		b[4] = 0xffc00b31;
-		b[5] = 0x68581511;
-		b[6] = 0x64f98fa7;
-		b[7] = 0xbefa4fa4;
-	}
+	b[0] = 0x67452301;
+	b[1] = 0xefcdab89;
+	b[2] = 0x98badcfe;
+	b[3] = 0x10325476;
+	return (b);
+}
+
+uint32_t		*initialize_buff_sha256(int buff_size)
+{
+	uint32_t		*b;
+
+	if (!(b = (uint32_t *)ft_memalloc(sizeof(uint32_t) * (buff_size + 1) * 64)))
+		return (NULL);
+	b[0] = 0x6a09e667;
+	b[1] = 0xbb67ae85;
+	b[2] = 0x3c6ef372;
+	b[3] = 0xa54ff53a;
+	b[4] = 0x510e527f;
+	b[5] = 0x9b05688c;
+	b[6] = 0x1f83d9ab;
+	b[7] = 0x5be0cd19;
+	return (b);
+}
+
+uint32_t		*initialize_buff_sha224(int buff_size)
+{
+	uint32_t		*b;
+
+	if (!(b = (uint32_t *)ft_memalloc(sizeof(uint32_t) * (buff_size + 1) * 64)))
+		return (NULL);
+	b[0] = 0xc1059ed8;
+	b[1] = 0x367cd507;
+	b[2] = 0x3070dd17;
+	b[3] = 0xf70e5939;
+	b[4] = 0xffc00b31;
+	b[5] = 0x68581511;
+	b[6] = 0x64f98fa7;
+	b[7] = 0xbefa4fa4;
 	return (b);
 }
 

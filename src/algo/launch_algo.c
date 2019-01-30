@@ -6,45 +6,46 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/30 18:38:36 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/30 21:37:07 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
 
-static void		print_result(t_ssl *h, int tmp_buff_size)
+int				select_algo(char **av, t_ssl *h)
 {
 	int			i;
 
 	i = -1;
-	if ((h->options & OPT_P) && h->f_cur == 0)
-		ft_printf("%s", h->f_txt[h->f_cur]);
-	if (!(h->options & OPT_Q) && !(h->options & OPT_R) && !h->std_in)
-		ft_printf("%s (%s) = ",
-			ft_strtoupper(h->algo_name), h->f_path[h->f_cur]);
-	if (h->md_buff)
-		while (++i < tmp_buff_size)
-			ft_printf("%8.8x", *(h->md_buff + i));
-	if (h->options & OPT_R && !(h->options & OPT_Q) && h->std_in != 1)
-		ft_printf(" %s", h->f_path[h->f_cur]);
-	ft_printf("\n");
+	h->algo_name = NULL;
+	while (++i < ALG_NUM)
+	{
+		if (!ft_strcmp(av[1], g_alg[i].name))
+		{
+			h->algo_name = ft_strdup(av[1]);
+			h->algo = i + 1;
+			h->b_size = g_alg[i].buff_size;
+		}
+	}
+	if (!h->algo_name)
+	{
+		print_message(3, NULL);
+		return (1);
+	}
+	return (0);
 }
 
 int				launch_algo(char *str, t_ssl *h)
 {
 	int			i;
-	uint32_t	*(*list_f[3])(uint32_t *chunk, t_ssl *h);
 
 	i = -1;
-	list_f[0] = process_chunk_md5;
-	list_f[1] = process_chunk_sha2;
-	list_f[2] = process_chunk_sha2;
 	if (!(h->final_str = preproc_str(str, 512, 64, h)))
 		return (1);
-	if (!(h->temp_b = initialize_md_buff(h->b_size, h->algo)))
+	if (!(h->temp_b = g_alg[h->algo - 1].init_buff(h->b_size)))
 		return (1);
 	while (++i < h->chunk_tt)
-		h->md_buff = list_f[h->algo - 1](h->final_str + (i * 16), h);
+		h->md_buff = g_alg[h->algo - 1].f(h->final_str + (i * 16), h);
 	print_result(h, h->b_size);
 	free(h->final_str);
 	free(h->temp_b);

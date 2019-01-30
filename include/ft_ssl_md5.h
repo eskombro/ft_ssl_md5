@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 18:21:43 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/30 21:41:07 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 # define FT_SSL_MD5_H
 
 # define BUFF_SIZE_READ 30
-# define TEMP_BUFFERS_SIZE "487"
+# define ALG_NUM 3
 
 # include "libft.h"
 
 enum {OPT_S = 8, OPT_R = 4, OPT_Q = 2, OPT_P = 1};
-enum {MD5 = 1, SHA_256 = 2, SHA_224 = 3};
 
 typedef struct	s_ssl
 {
@@ -42,11 +41,15 @@ typedef struct	s_ssl
 	char		std_in;
 }				t_ssl;
 
-/*
-** main.c
-*/
+typedef struct	s_alg
+{
+	char		*name;
+	char		buff_size;
+	uint32_t	*(*f)(uint32_t *chunk, t_ssl *h);
+	uint32_t	*(*init_buff)(int size);
+}				t_alg;
 
-void			print_message(int m, char *arg);
+t_alg			g_alg[ALG_NUM];
 
 /*
 ** handle_args.c
@@ -58,13 +61,16 @@ int				handle_args(t_ssl *h, int ac, char **av);
 ** preproc.c
 */
 
-uint32_t		*initialize_md_buff(int buff_size, char algo);
+uint32_t		*initialize_buff_md5(int buff_size);
+uint32_t		*initialize_buff_sha256(int buff_size);
+uint32_t		*initialize_buff_sha224(int buff_size);
 uint32_t		*preproc_str(char *str, int block_size, int end_size, t_ssl *h);
 
 /*
 ** launch_algo.c
 */
 
+int				select_algo(char **av, t_ssl *h);
 int				launch_algo(char *str, t_ssl *h);
 
 /*
@@ -90,6 +96,7 @@ uint32_t		rot_32_right(uint32_t base, uint32_t rounds);
 ** print.c
 */
 
+void			print_result(t_ssl *h, int tmp_buff_size);
 void			print_message(int m, char *arg);
 void			print_bits(unsigned char c);
 void			print_buff_bits(char *buff, uint64_t expect_ct);

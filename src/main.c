@@ -6,13 +6,19 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 11:43:19 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/30 21:41:04 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
 
-int				read_file(t_ssl *h, int fd)
+t_alg			g_alg[] = {
+	{"md5", 4, &process_chunk_md5, &initialize_buff_md5},
+	{"sha256", 8, &process_chunk_sha2, &initialize_buff_sha256},
+	{"sha224", 7, &process_chunk_sha2, &initialize_buff_sha224}
+};
+
+static int		read_file(t_ssl *h, int fd)
 {
 	char		*line;
 	int			r;
@@ -34,14 +40,14 @@ int				read_file(t_ssl *h, int fd)
 	return (0);
 }
 
-int				main_logic(t_ssl *h)
+static int		main_logic(t_ssl *h)
 {
 	int			response;
 	int			fd;
 
 	response = 1;
 	h->chunk_current = 0;
-	if ((h->md_buff = initialize_md_buff(h->b_size, h->algo)))
+	if ((h->md_buff = g_alg[h->algo - 1].init_buff(h->b_size)))
 	{
 		fd = 0;
 		if (h->std_in == 0)
@@ -64,7 +70,6 @@ int				main_logic(t_ssl *h)
 int				main(int ac, char **av)
 {
 	t_ssl		*h;
-	char		*b_size;
 
 	if (ac == 1)
 	{
@@ -74,9 +79,6 @@ int				main(int ac, char **av)
 	h = (t_ssl*)ft_memalloc(sizeof(t_ssl));
 	if (!h || handle_args(h, ac, av))
 		return (1);
-	b_size = ft_strdup(TEMP_BUFFERS_SIZE);
-	h->b_size = b_size[h->algo - 1] - 48;
-	ft_strdel(&b_size);
 	h->f_cur = -1;
 	while (++h->f_cur < h->file_ct)
 	{

@@ -6,13 +6,13 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 07:47:30 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/28 18:18:03 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/30 21:22:58 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
 
-int				is_valid_option(t_ssl *h, char *arg)
+static int		is_valid_option(t_ssl *h, char *arg)
 {
 	if (!ft_strcmp(arg, "-p"))
 	{
@@ -80,25 +80,6 @@ static int		handle_options(int ac, char **av, t_ssl *h, int *i)
 			break ;
 		}
 	}
-	return (0);
-}
-
-int				select_algo(char **av, t_ssl *h)
-{
-	if (!ft_strcmp(av[1], "md5") || !ft_strcmp(av[1], "sha256")
-		|| !ft_strcmp(av[1], "sha224"))
-		h->algo_name = ft_strdup(av[1]);
-	else
-	{
-		print_message(3, NULL);
-		return (1);
-	}
-	if (!ft_strcmp(h->algo_name, "md5"))
-		h->algo = MD5;
-	else if (!ft_strcmp(h->algo_name, "sha256"))
-		h->algo = SHA_256;
-	else if (!ft_strcmp(h->algo_name, "sha224"))
-		h->algo = SHA_224;
 	return (0);
 }
 
