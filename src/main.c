@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/31 17:48:14 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/31 17:59:03 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ static int		main_logic(t_ssl *h)
 		}
 		else
 			print_message(2, h->f_path[h->f_cur]);
+		ft_bzero(h->md_buff, g_alg[h->algo - 1].buff_size);
 		free(h->md_buff);
 	}
 	return (response);

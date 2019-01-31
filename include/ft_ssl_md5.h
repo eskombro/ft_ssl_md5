@@ -6,14 +6,14 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:06 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/31 17:55:33 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/31 18:00:25 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_SSL_MD5_H
 # define FT_SSL_MD5_H
 
-# define BUFF_SIZE_READ 30
+# define BUFF_SIZE_READ 10
 # define ALG_NUM 3
 
 # include "libft.h"
