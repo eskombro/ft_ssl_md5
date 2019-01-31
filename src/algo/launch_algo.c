@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 03:17:50 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/30 21:37:07 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/31 17:53:38 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int				launch_algo(char *str, t_ssl *h)
 		return (1);
 	if (!(h->temp_b = g_alg[h->algo - 1].init_buff(h->b_size)))
 		return (1);
+	ft_bzero(h->temp_b, g_alg[h->algo - 1].buff_size);
 	while (++i < h->chunk_tt)
 		h->md_buff = g_alg[h->algo - 1].f(h->final_str + (i * 16), h);
 	print_result(h, h->b_size);

@@ -6,7 +6,7 @@
 /*   By: sjimenez <sjimenez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 22:40:13 by sjimenez          #+#    #+#             */
-/*   Updated: 2019/01/30 21:41:04 by sjimenez         ###   ########.fr       */
+/*   Updated: 2019/01/31 17:48:14 by sjimenez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ static int		main_logic(t_ssl *h)
 		{
 			if (!(h->options & OPT_S))
 				read_file(h, fd);
+			close(fd);
 			response = launch_algo(h->f_txt[h->f_cur], h);
 			ft_strdel(&h->f_txt[h->f_cur]);
 			h->options = h->options & OPT_S ? h->options ^ OPT_S : 0;
