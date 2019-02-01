@@ -22,12 +22,12 @@ Available commands are "md5", "sha256" and "sha224"
 
 ## Examples
 
-echo "test" > file.txt
-./ft_ssl md5 file.txt
+echo "test" > file.txt  
+./ft_ssl md5 file.txt  
 
-./ft_ssl sha256 -s "Some example"
+./ft_ssl sha256 -s "Some example"  
 
-echo "test 1" > file1.txt
-echo "test 2" > file2.txt
-echo "test 3" > file3.txt
-./ft_ssl md5 file1.txt file2.txt file3.txt
+echo "test 1" > file1.txt  
+echo "test 2" > file2.txt  
+echo "test 3" > file3.txt  
+./ft_ssl md5 file1.txt file2.txt file3.txt  
